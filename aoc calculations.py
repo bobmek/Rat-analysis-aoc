@@ -24,6 +24,8 @@ ind_AUC0totnadj=np.zeros((numRats-1,2))
 ind_AUCtnadjto240=np.zeros((numRats-1,2))
 ind_AOC0totnadj=np.zeros((numRats-1,1))
 ind_AOCtnadjto240=np.zeros((numRats-1,1))
+ind_tnadir=np.zeros((numRats-1,1))
+ind_BGN=np.zeros((numRats-1,1))
 #ind_ffit=np.zeros((numRats-1, len(time)))
 #ind_ins_func=np.empty((numRats-1,1))
 
@@ -41,25 +43,32 @@ for m in range (0, numRats-1):
     dummycoefs=ind_d_coefs[m]
     dummycoefs=dummycoefs[ : : -1]
     ind_d_roots[m]=np.roots(dummycoefs)
-    #ind_ins_func[m]=lambda x: ind_coefs[m,0]+ind_coefs[m,1]*x+ ind_coefs[m,2]*x**2+ind_coefs[m,3]*x**3+ind_coefs[m,4]*x**4
-
-
+    
+#finding the mean nadir
 d_coefs=poly.polyder(mean_coefs)
 d_coefs_roots=np.roots(d_coefs[ : : -1])
 
-#finding the mean nadir
 for m in range(0,3):
-    print '%d'%(m)
-    if 0 < d_coefs_roots[m] < 150:
+    #print '%d'%(m)
+    if 0 < d_coefs_roots[m] < 132: #upper limit corresponds to tn of average 10ug KP if BG drop is 350
         tnadir=np.real(d_coefs_roots[m])
         break
-
-#finding the individual nadirs
-
 mean_BGnadir=np.polyval(mean_coefs[ : : -1], tnadir)
 mean_BGdrop=mean_coefs[0]-mean_BGnadir
 
 tnadj=mean_BGdrop*0.374672
+
+#finding the individual nadirs will go here if need be
+for m in range(0,numRats-1):
+    for n in range(0,3):        
+        #print '%d'%(m)
+        if 0 < ind_d_roots[m,n] < 132: #upper limit corresponds to tn of average 10ug KP if BG drop is 350
+            ind_tnadir[m]=np.real(ind_d_roots[m,n])
+            ind_BGN[m]=np.polyval(ind_coefs[m][::-1],ind_tnadir[m])
+            break
+
+
+
 
 mean_AUC0totnadj=integrate.quad(mean_ins_func,0,tnadj)
 mean_AUCtnadjto240=integrate.quad(mean_ins_func,tnadj,240)
