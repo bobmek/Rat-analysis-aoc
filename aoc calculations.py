@@ -9,6 +9,7 @@ import string
 wb1 = openpyxl.load_workbook('example.xlsx')
 s1=wb1.get_sheet_by_name('Sheet1')
 s2=wb1.get_sheet_by_name('Sheet2')
+analog='T-0763'
 
 rats_RawData=np.array([[cell.value for cell in col] for col in s1['K1':'W7']])
 
@@ -101,7 +102,7 @@ ind_data={'IBG':ind_IBG,'BGN':ind_BGN, 'Tnadir':ind_tnadir,'AOC0totnadj':ind_AOC
 
 wb=openpyxl.Workbook()
 ws=wb.active
-ws.title='Table 1' 
+ws.title='%s Analysis' %(analog) 
 #mean_data=np.transpose(np.hstack((mean_IBG, mean_BGnadir,tnadir,mean_AOC0totnadj[0],mean_AOCtnadjto240[0])))
 totIBG=np.append(ind_IBG,mean_IBG)
 totBGN=np.append(ind_BGN,mean_BGnadir)
@@ -119,5 +120,4 @@ for i in range(tot_tableshape[0]):
     for j in range(tot_tableshape[1]):
         ws[alph[i]+str(j+1)] = tot_data_table[i, j]
 
-wb.save('analyzed.xlsx')
-
+wb.save('analyzed.xlsx') 
