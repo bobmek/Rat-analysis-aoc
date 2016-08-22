@@ -3,11 +3,12 @@ import numpy as np
 import numpy.polynomial.polynomial as poly
 import scipy
 from scipy import integrate
+import string
 
 
-
-wb = openpyxl.load_workbook('example.xlsx')
-s1=wb.get_sheet_by_name('Sheet1')
+wb1 = openpyxl.load_workbook('example.xlsx')
+s1=wb1.get_sheet_by_name('Sheet1')
+s2=wb1.get_sheet_by_name('Sheet2')
 
 rats_RawData=np.array([[cell.value for cell in col] for col in s1['K1':'W7']])
 
@@ -26,6 +27,7 @@ ind_AOC0totnadj=np.zeros((numRats-1,1))
 ind_AOCtnadjto240=np.zeros((numRats-1,1))
 ind_tnadir=np.zeros((numRats-1,1))
 ind_BGN=np.zeros((numRats-1,1))
+ind_IBG=np.zeros((numRats-1,1))
 #ind_ffit=np.zeros((numRats-1, len(time)))
 #ind_ins_func=np.empty((numRats-1,1))
 
@@ -33,12 +35,14 @@ mean_rat=np.average(rats,axis=0)
 
 
 mean_coefs=poly.polyfit(time,mean_rat,4)
+mean_IBG=mean_coefs[0]
 mean_fit=poly.polyval(time, mean_coefs)
 mean_ins_func=lambda x: mean_coefs[0]+mean_coefs[1]*x+ mean_coefs[2]*x**2+mean_coefs[3]*x**3+mean_coefs[4]*x**4
 
 for m in range (0, numRats-1):
     #print '%d'%(m)
     ind_coefs[m]=poly.polyfit(time,rats[m],4)
+    ind_IBG[m]=ind_coefs[m,0]
     ind_d_coefs[m]=poly.polyder(ind_coefs[m])
     dummycoefs=ind_d_coefs[m]
     dummycoefs=dummycoefs[ : : -1]
@@ -82,4 +86,38 @@ for m in range (0, numRats-1):
     ind_AUCtnadjto240[m]=integrate.quad(ind_ins_func,tnadj,240)
     ind_AOC0totnadj[m]=tnadj*ind_coefs[m,0]-ind_AUC0totnadj[m,0]
     ind_AOCtnadjto240[m]=(240-tnadj)*ind_coefs[m,0]-ind_AUCtnadjto240[m,0]
+    
+ind_data={'IBG':ind_IBG,'BGN':ind_BGN, 'Tnadir':ind_tnadir,'AOC0totnadj':ind_AOC0totnadj,'AOCtnadjto240':ind_AOCtnadjto240}
+#ind_table=pd.DataFrame(ind_data)
+#writer=pd.ExcelWriter('analysis.xlsx')
+#ind_table.to_excel(writer, 'analysis1')
+#writer.save()
+#ind_analysis=np.zeros((numRats-1,6))
+#ind_analysis[0]=ind_IBG
+#ind_analysis[1]=ind_BGN
+#ind_analysis[2]=ind_tnadir
+#ind_analysis[3]=ind_AOC0totnadj
+#ind_analysis[4]=ind_AOCtnadjto240
+
+wb=openpyxl.Workbook()
+ws=wb.active
+ws.title='Table 1' 
+#mean_data=np.transpose(np.hstack((mean_IBG, mean_BGnadir,tnadir,mean_AOC0totnadj[0],mean_AOCtnadjto240[0])))
+totIBG=np.append(ind_IBG,mean_IBG)
+totBGN=np.append(ind_BGN,mean_BGnadir)
+tottnadir=np.append(ind_tnadir,tnadir)
+totAOC1=np.append(ind_AOC0totnadj,mean_AOC0totnadj[0])
+totAOC2=np.append(ind_AOCtnadjto240,mean_AOCtnadjto240[0])
+mean_data=np.array((mean_IBG, mean_BGnadir,tnadir,mean_AOC0totnadj[0],mean_AOCtnadjto240[0]))
+ind_data_table=np.transpose(np.hstack((ind_IBG,ind_BGN, ind_tnadir,ind_AOC0totnadj,ind_AOCtnadjto240)))
+
+tot_data_table=np.vstack((totIBG,totBGN, tottnadir,totAOC1,totAOC2))
+tot_tableshape=np.shape(tot_data_table)
+alph=list(string.ascii_uppercase)
+
+for i in range(tot_tableshape[0]):
+    for j in range(tot_tableshape[1]):
+        ws[alph[i]+str(j+1)] = tot_data_table[i, j]
+
+wb.save('analyzed.xlsx')
 
