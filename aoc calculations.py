@@ -40,15 +40,6 @@ mean_IBG=mean_coefs[0]
 mean_fit=poly.polyval(time, mean_coefs)
 mean_ins_func=lambda x: mean_coefs[0]+mean_coefs[1]*x+ mean_coefs[2]*x**2+mean_coefs[3]*x**3+mean_coefs[4]*x**4
 
-for m in range (0, numRats-1):
-    #print '%d'%(m)
-    ind_coefs[m]=poly.polyfit(time,rats[m],4)
-    ind_IBG[m]=ind_coefs[m,0]
-    ind_d_coefs[m]=poly.polyder(ind_coefs[m])
-    dummycoefs=ind_d_coefs[m]
-    dummycoefs=dummycoefs[ : : -1]
-    ind_d_roots[m]=np.roots(dummycoefs)
-    
 #finding the mean nadir
 d_coefs=poly.polyder(mean_coefs)
 d_coefs_roots=np.roots(d_coefs[ : : -1])
@@ -62,6 +53,17 @@ mean_BGnadir=np.polyval(mean_coefs[ : : -1], tnadir)
 mean_BGdrop=mean_coefs[0]-mean_BGnadir
 
 tnadj=mean_BGdrop*0.374672
+
+#finding tnadir for each individual rat
+for m in range (0, numRats-1):
+    #print '%d'%(m)
+    ind_coefs[m]=poly.polyfit(time,rats[m],4)
+    ind_IBG[m]=ind_coefs[m,0]
+    ind_d_coefs[m]=poly.polyder(ind_coefs[m])
+    dummycoefs=ind_d_coefs[m] #dummycoefs gets re-written every time...there may be a better way to do this
+    dummycoefs=dummycoefs[ : : -1]
+    ind_d_roots[m]=np.roots(dummycoefs)
+    
 
 #finding the individual nadirs will go here if need be
 for m in range(0,numRats-1):
@@ -89,16 +91,6 @@ for m in range (0, numRats-1):
     ind_AOCtnadjto240[m]=(240-tnadj)*ind_coefs[m,0]-ind_AUCtnadjto240[m,0]
     
 ind_data={'IBG':ind_IBG,'BGN':ind_BGN, 'Tnadir':ind_tnadir,'AOC0totnadj':ind_AOC0totnadj,'AOCtnadjto240':ind_AOCtnadjto240}
-#ind_table=pd.DataFrame(ind_data)
-#writer=pd.ExcelWriter('analysis.xlsx')
-#ind_table.to_excel(writer, 'analysis1')
-#writer.save()
-#ind_analysis=np.zeros((numRats-1,6))
-#ind_analysis[0]=ind_IBG
-#ind_analysis[1]=ind_BGN
-#ind_analysis[2]=ind_tnadir
-#ind_analysis[3]=ind_AOC0totnadj
-#ind_analysis[4]=ind_AOCtnadjto240
 
 wb=openpyxl.Workbook()
 ws=wb.active
