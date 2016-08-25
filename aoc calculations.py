@@ -92,9 +92,9 @@ for m in range (0, numRats-1):
     
 ind_data={'IBG':ind_IBG,'BGN':ind_BGN, 'Tnadir':ind_tnadir,'AOC0totnadj':ind_AOC0totnadj,'AOCtnadjto240':ind_AOCtnadjto240}
 
-wb=openpyxl.Workbook()
-ws=wb.active
-ws.title='%s Analysis' %(analog) 
+#wb=openpyxl.Workbook()
+#ws=wb.active
+#ws.title='%s Analysis' %(analog) 
 #mean_data=np.transpose(np.hstack((mean_IBG, mean_BGnadir,tnadir,mean_AOC0totnadj[0],mean_AOCtnadjto240[0])))
 totIBG=np.append(ind_IBG,mean_IBG)
 totBGN=np.append(ind_BGN,mean_BGnadir)
@@ -110,6 +110,6 @@ alph=list(string.ascii_uppercase)
 
 for i in range(tot_tableshape[0]):
     for j in range(tot_tableshape[1]):
-        ws[alph[i]+str(j+1)] = tot_data_table[i, j]
+        s2[alph[i]+str(j+1)] = tot_data_table[i, j]
 
-wb.save('737analyzed.xlsx') 
+wb1.save('anakyzed.xlsx')
