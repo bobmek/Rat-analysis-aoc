@@ -9,6 +9,8 @@ import string
 wb1 = openpyxl.load_workbook('example.xlsx')
 s1=wb1.get_sheet_by_name('Sheet1')
 s2=wb1.get_sheet_by_name('Sheet2')
+s3=wb1.get_sheet_by_name('Sheet3')
+s4=wb1.get_sheet_by_name('Sheet4')
 analog='T-0737'
 
 rats_RawData=np.array([[cell.value for cell in col] for col in s1['D1':'P5']])
@@ -110,6 +112,6 @@ alph=list(string.ascii_uppercase)
 
 for i in range(tot_tableshape[0]):
     for j in range(tot_tableshape[1]):
-        s2[alph[i]+str(j+1)] = tot_data_table[i, j]
+        s4[alph[i]+str(j+1)] = tot_data_table[i, j]
 
-wb1.save('anakyzed.xlsx')
+wb1.save('example.xlsx')
