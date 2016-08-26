@@ -19,7 +19,7 @@ rats_RawData=np.array([[cell.value for cell in col] for col in s1['D1':'P5']])
 numRats=len(rats_RawData)
 
 
-time=rats_RawData[0]
+time=np.array([[cell.value for cell in col] for col in s1 ['D1':'P1']])
 rats=rats_RawData[1:numRats]
 ind_coefs=np.zeros((numRats-1,5))
 ind_d_coefs=np.zeros((numRats-1,4))
