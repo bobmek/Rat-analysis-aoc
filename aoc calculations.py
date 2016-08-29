@@ -12,25 +12,27 @@ s2=wb1.get_sheet_by_name('Sheet2')
 s3=wb1.get_sheet_by_name('Sheet3')
 s4=wb1.get_sheet_by_name('Sheet4')
 analog='T-0737'
+writesheet=s4
 
-rats_RawData=np.array([[cell.value for cell in col] for col in s1['D1':'P5']])
+rats_RawData=np.array([[cell.value for cell in col] for col in s1['D10':'P12']])
 
 #np.average()
 numRats=len(rats_RawData)
 
-
+#time=rats
 time=np.array([[cell.value for cell in col] for col in s1 ['D1':'P1']])
-rats=rats_RawData[1:numRats]
-ind_coefs=np.zeros((numRats-1,5))
-ind_d_coefs=np.zeros((numRats-1,4))
-ind_d_roots=np.zeros((numRats-1,3), dtype=np.complex_)
-ind_AUC0totnadj=np.zeros((numRats-1,2))
-ind_AUCtnadjto240=np.zeros((numRats-1,2))
-ind_AOC0totnadj=np.zeros((numRats-1,1))
-ind_AOCtnadjto240=np.zeros((numRats-1,1))
-ind_tnadir=np.zeros((numRats-1,1))
-ind_BGN=np.zeros((numRats-1,1))
-ind_IBG=np.zeros((numRats-1,1))
+time=time.flatten()
+rats=rats_RawData
+ind_coefs=np.zeros((numRats,5))
+ind_d_coefs=np.zeros((numRats,4))
+ind_d_roots=np.zeros((numRats,3), dtype=np.complex_)
+ind_AUC0totnadj=np.zeros((numRats,2))
+ind_AUCtnadjto240=np.zeros((numRats,2))
+ind_AOC0totnadj=np.zeros((numRats,1))
+ind_AOCtnadjto240=np.zeros((numRats,1))
+ind_tnadir=np.zeros((numRats,1))
+ind_BGN=np.zeros((numRats,1))
+ind_IBG=np.zeros((numRats,1))
 #ind_ffit=np.zeros((numRats-1, len(time)))
 #ind_ins_func=np.empty((numRats-1,1))
 
@@ -57,7 +59,7 @@ mean_BGdrop=mean_coefs[0]-mean_BGnadir
 tnadj=mean_BGdrop*0.374672
 
 #finding tnadir for each individual rat
-for m in range (0, numRats-1):
+for m in range (0, numRats):
     #print '%d'%(m)
     ind_coefs[m]=poly.polyfit(time,rats[m],4)
     ind_IBG[m]=ind_coefs[m,0]
@@ -68,7 +70,7 @@ for m in range (0, numRats-1):
     
 
 #finding the individual nadirs will go here if need be
-for m in range(0,numRats-1):
+for m in range(0,numRats):
     for n in range(0,3):        
         #print '%d'%(m)
         if 0 < ind_d_roots[m,n] < 132: #upper limit corresponds to tn of average 10ug KP if BG drop is 350
@@ -85,7 +87,7 @@ mean_AUCtnadjto240=integrate.quad(mean_ins_func,tnadj,240)
 mean_AOC0totnadj=tnadj*mean_coefs[0]-mean_AUC0totnadj
 mean_AOCtnadjto240=(240-tnadj)*mean_coefs[0]-mean_AUCtnadjto240
 
-for m in range (0, numRats-1):
+for m in range (0, numRats):
     ind_ins_func=lambda x: ind_coefs[m,0]+ind_coefs[m,1]*x+ ind_coefs[m,2]*x**2+ind_coefs[m,3]*x**3+ind_coefs[m,4]*x**4
     ind_AUC0totnadj[m]=integrate.quad(ind_ins_func,0,tnadj)
     ind_AUCtnadjto240[m]=integrate.quad(ind_ins_func,tnadj,240)
@@ -112,6 +114,6 @@ alph=list(string.ascii_uppercase)
 
 for i in range(tot_tableshape[0]):
     for j in range(tot_tableshape[1]):
-        s4[alph[i]+str(j+1)] = tot_data_table[i, j]
+        writesheet[alph[i]+str(j+1)] = tot_data_table[i, j]
 
 wb1.save('example.xlsx')
