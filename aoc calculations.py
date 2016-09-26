@@ -14,7 +14,7 @@ s4=wb1.get_sheet_by_name('Sheet4')
 analog='T-0737'
 writesheet=s3
 
-rats_RawData=np.array([[cell.value for cell in col] for col in s1['D8':'P11']])
+rats_RawData=np.array([[cell.value for cell in col] for col in s1['D7':'P11']])
 
 #np.average()
 numRats=len(rats_RawData)
