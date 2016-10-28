@@ -11,10 +11,13 @@ s1=wb1.get_sheet_by_name('Sheet1')
 s2=wb1.get_sheet_by_name('Sheet2')
 s3=wb1.get_sheet_by_name('Sheet3')
 s4=wb1.get_sheet_by_name('Sheet4')
+s5=wb1.get_sheet_by_name('Sheet5')
+s6=wb1.get_sheet_by_name('Sheet6')
+s7=wb1.get_sheet_by_name('Sheet7')
 analog='T-0737'
-writesheet=s3
 
-rats_RawData=np.array([[cell.value for cell in col] for col in s1['D7':'P11']])
+writesheet=s7
+rats_RawData=np.array([[cell.value for cell in col] for col in s1['D18':'P22']])
 
 #np.average()
 numRats=len(rats_RawData)
