@@ -17,13 +17,13 @@ s4=wb1.get_sheet_by_name('Sheet4')
 analog='T-0737'
 
 writesheet=s4
-rats_RawData=np.array([[cell.value for cell in col] for col in s1['D10':'P13']])
+rats_RawData=np.array([[cell.value for cell in col] for col in s1['B2':'P25']])
 
 #np.average()
 numRats=len(rats_RawData)
 
 #time=rats
-time=np.array([[cell.value for cell in col] for col in s1 ['D1':'P1']])
+time=np.array([[cell.value for cell in col] for col in s1 ['B1':'P1']])
 time=time.flatten()
 rats=rats_RawData
 ind_coefs=np.zeros((numRats,5))
@@ -59,7 +59,12 @@ for m in range(0,3):
 mean_BGnadir=np.polyval(mean_coefs[ : : -1], tnadir)
 mean_BGdrop=mean_coefs[0]-mean_BGnadir
 
-tnadj=mean_BGdrop*0.374672
+tnadj=mean_BGdrop*0.47779
+
+#For neosome this relation is tnadj=BGDrop*0.47779
+#For case this relation is tnadj=BGDrop*0.374672
+
+
 
 #finding tnadir for each individual rat
 for m in range (0, numRats):
